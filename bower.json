@@ -1,0 +1,22 @@
+{
+  "name": "freakapp",
+  "private": true,
+  "description": "TV Series, Films, Movies, Cinema, Peliculas, Cine",
+  "main": "app.js",
+  "authors": ["perezmjosea <perezm.josea@gmail.com>"],
+  "license": "ISC",
+  "keywords": [
+    "TV",
+    "Series",
+    "Films",
+    "Movies",
+    "Cinema",
+    "Peliculas",
+    "Cine"
+  ],
+  "homepage": "https://github.com/perezmjosea/FreakApp",
+  "ignore": ["**/.*", "node_modules", "bower_components", "test", "tests"],
+  "dependencies": {
+    "bootstrap": "^4.1.3"
+  }
+}

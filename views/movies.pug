@@ -1,7 +1,24 @@
 extends templates/layout
 
 block content
-    section.container-fluid
+    //- section.container-fluid.genres
+    //-     .container
+    //-         .row
+    section.container-fluid.movies
         .container
-            h1= title
-            p Welcome to #{title}
+            .row
+                each movie, index in movies
+                    .col-12.col-sm-6.col-md-4.col-lg-3.movie
+                        <div class="card">
+                            <div class="card-header">
+                                img(class="card-img-top", src="http://image.tmdb.org/t/p/w500" + movie.poster_path, alt="Card Image Cap")
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">#{movie.title}</h5>
+                                <p class="card-text">#{movie.overview}</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                        </div>
+    section.container-fluid

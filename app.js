@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
@@ -18,8 +20,12 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Statics
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/node_modules", express.static(__dirname + "/node_modules"));
 app.use("/bower_components", express.static(__dirname + "/bower_components"));
+app.use("/tmdb-images", express.static("http://image.tmdb.org/t/p/"));
 
 // app.use("/", indexRouter);
 // app.use("/users", usersRouter);

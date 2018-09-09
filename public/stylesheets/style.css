@@ -3,13 +3,24 @@ body {
   margin: 0;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
-a {
+a,
+a:hover {
+  text-decoration: none;
+}
+.primary-link {
   color: #00b7ff;
+}
+.primary-link:hover {
+  color: #dc7921;
+}
+.active.primary-link {
+  font-weight: bold;
+  color: #dc7921;
 }
 
 .loading-mask {
   position: fixed;
+  display: block;
   top: 0;
   left: 0;
   width: 100%;
@@ -17,6 +28,10 @@ a {
   padding: 0;
   margin: 0;
   background-color: rgba(0, 0, 0, 0.85);
+  z-index: 10;
+}
+.loading-mask.hidden {
+  display: none;
 }
 
 /* Navbar */
@@ -67,4 +82,18 @@ section {
   }
   .card-img-top {
   }
+}
+
+/* Filters */
+.filters {
+}
+.filters a {
+  text-decoration: none;
+}
+.filters a {
+  text-decoration: none;
+}
+.filters a.hover,
+.filters a.active {
+  font-weight: bold;
 }

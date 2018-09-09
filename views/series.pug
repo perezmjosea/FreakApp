@@ -1,10 +1,30 @@
 extends templates/layout
 
 block content
-    section.container-fluid.movies
+    //- section.container-fluid.genres
+    //-     .container
+    //-         .row
+    section.container-fluid.series
         .container
             .row
-                each serie, index in series
-                    .col-12.col-sm-6.col-md-4.col-lg-3.serie-card
-                        p= serie.name
+                aside.col-12.col-md-3.filters
+                    each genre, index in genres
+                        <p>#{genre.id} - #{genre.name}</p>
+
+                .col-12.col-md-9
+                    .row
+                        each serie, index in series
+                            .col-12.col-sm-6.col-md-4.serie
+                                <div class="card">
+                                    <div class="card-header">
+                                        img(class="card-img-top", src="http://image.tmdb.org/t/p/w500" + serie.poster_path, alt=serie.name, title=serie.name)
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">#{serie.name}</h5>
+                                        <p class="card-text">#{serie.overview}</p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    </div>
+                                </div>
     section.container-fluid

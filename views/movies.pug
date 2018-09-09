@@ -7,18 +7,30 @@ block content
     section.container-fluid.movies
         .container
             .row
-                each movie, index in movies
-                    .col-12.col-sm-6.col-md-4.col-lg-3.movie
-                        <div class="card">
-                            <div class="card-header">
-                                img(class="card-img-top", src="http://image.tmdb.org/t/p/w500" + movie.poster_path, alt="Card Image Cap")
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">#{movie.title}</h5>
-                                <p class="card-text">#{movie.overview}</p>
-                            </div>
-                            <div class="card-footer">
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
+                aside.col-12.col-md-3.filters
+                    a(class=(!genreActive ? "primary-link active" : "primary-link"), href="/movies")
+                        <p>Todos los géneros</p>
+                    each genre, index in genres
+                        a(class=(genre.id === genreActive ? "primary-link active" : "primary-link"), href="/movies/genre/" + genre.id)
+                            <p>#{genre.name}</p>
+
+                .col-12.col-md-9
+                    .row
+                        if movies.length > 0
+                            each movie, index in movies
+                                .col-12.col-sm-6.col-md-4.movie
+                                    <div class="card">
+                                        <div class="card-header">
+                                            img(class="card-img-top", src="http://image.tmdb.org/t/p/w500" + movie.poster_path, alt=movie.title, title=movie.title)
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">#{movie.title}</h5>
+                                            <p class="card-text">#{movie.overview}</p>
+                                        </div>
+                                        <div class="card-footer">
+                                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        </div>
+                                    </div>
+                        else
+                            <p>No results</p>
     section.container-fluid

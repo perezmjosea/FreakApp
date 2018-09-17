@@ -1,8 +1,21 @@
 body {
   padding: 0;
   margin: 0;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  /* background-color: #0f171e; */
 }
+.primary {
+  color: #00b7ff;
+}
+.grey {
+  color: #a8a8a8;
+}
+.secondary {
+  color: #dc7921;
+}
+
+/* Links*/
 a,
 a:hover {
   text-decoration: none;
@@ -10,17 +23,33 @@ a:hover {
 .primary-link {
   color: #00b7ff;
 }
-.primary-link:hover {
+.primary-link:hover,
+.active.primary-link {
   color: #dc7921;
 }
-.active.primary-link {
-  font-weight: bold;
-  color: #dc7921;
+.grey-link {
+  color: #969696 !important;
+}
+.grey-link:hover,
+.active.grey-link {
+  color: #636363 !important;
+  border-left: 1px solid #797979;
+}
+
+.primary-btn {
+  color: #fff;
+  background-color: #00b7ff;
+}
+.primary-btn:hover {
+  color: #fff;
+  filter: brightness(80%);
 }
 
 .loading-mask {
+  display: none;
   position: fixed;
-  display: block;
+  align-items: center;
+  justify-content: center;
   top: 0;
   left: 0;
   width: 100%;
@@ -30,8 +59,24 @@ a:hover {
   background-color: rgba(0, 0, 0, 0.85);
   z-index: 10;
 }
-.loading-mask.hidden {
-  display: none;
+.loading-mask i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  font-size: 50px;
+  color: #dc7921;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 5;
+  background-color: rgba(27, 37, 48, 0.85);
+}
+.main {
+  margin-top: 76px;
 }
 
 /* Navbar */
@@ -69,11 +114,28 @@ section {
   object-fit: cover;
 }
 .card-body {
+  position: relative;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 16px; /* fallback */
   height: 180px; /* fallback */
   -webkit-box-orient: vertical;
+}
+.card-body:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background-image: linear-gradient(to top, #fff 15%, transparent 100%);
+}
+.card-title {
+  color: #dc7921;
+  font-size: 1.2rem;
+}
+.card-text {
+  color: #969696;
 }
 
 @media only screen and (min-width: 576px) {
@@ -84,16 +146,118 @@ section {
   }
 }
 
+/* Movie Details */
+.movie-block {
+  display: flex;
+  align-items: stretch;
+}
+.movie-block .movie-img {
+}
+.movie-block .movie-img img {
+  width: 100%;
+  height: auto;
+}
+.movie-block .movie-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.movie-block .movie-info .movie-title {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  border-bottom: 1px solid;
+}
+.movie-block .movie-info .movie-date {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+.movie-block .movie-info .movie-desc {
+  line-height: 1.2rem;
+  margin-bottom: 20px;
+}
+.movie-block .movie-info .movie-features {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 100%;
+}
+.movie-block .movie-info .movie-features .movie-tags {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 37px;
+}
+.movie-block .movie-info .movie-features .movie-tags .tag {
+  margin-right: 10px;
+}
+.movie-block .movie-info .movie-features .movie-tags .tag i {
+  margin-right: 2px;
+}
+.movie-block .movie-info .movie-features .movie-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.movie-block .movie-info .movie-features .movie-actions .action {
+}
+
+.custom-check {
+  display: none;
+}
+.custom-check + label {
+  margin-left: 6px;
+  margin-bottom: 0;
+}
+.custom-check + label:after {
+  font-family: "Font Awesome\ 5 Free";
+  font-size: 25px;
+  font-weight: 900;
+}
+
+#toggleLibrary + label:after {
+  content: "\f02e";
+}
+
+#toggleFav + label:after {
+  content: "\f004";
+}
+
 /* Filters */
 .filters {
 }
-.filters a {
-  text-decoration: none;
+.filter-block {
+  margin-bottom: 20px;
+  padding: 20px;
+  /* border-bottom: 1px solid #dc7921; */
+  background-color: rgba(0, 0, 0, 0.03);
 }
-.filters a {
-  text-decoration: none;
+.filter-header {
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  color: #dc7921;
+  border-bottom: 1px solid #dc7921;
 }
-.filters a.hover,
-.filters a.active {
-  font-weight: bold;
+.filter-content {
+}
+.search-group {
+  position: relative;
+  margin: 0;
+}
+.search-group .form-control {
+  height: 34px;
+  padding-right: 34px;
+  font-size: 0.8rem;
+}
+.search-group i {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.filters a {
+  display: flex;
+  padding: 3px 5px;
+  margin: 5px 3px;
+  border-left: 1px solid transparent;
+  text-decoration: none;
 }

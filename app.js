@@ -5,11 +5,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-
-// const indexRouter = require("./routes/index");
-// const usersRouter = require("./routes/users");
-const appRouter = require("./routes/app-routes");
-
+const appRouter = require("./routes/routes");
 const app = express();
 
 // view engine setup
@@ -27,8 +23,7 @@ app.use("/node_modules", express.static(__dirname + "/node_modules"));
 app.use("/bower_components", express.static(__dirname + "/bower_components"));
 app.use("/tmdb-images", express.static("http://image.tmdb.org/t/p/"));
 
-// app.use("/", indexRouter);
-// app.use("/users", usersRouter);
+// Router
 app.use("/", appRouter);
 
 // catch 404 and forward to error handler

@@ -1,0 +1,47 @@
+extends templates/layout
+
+block content
+    section(class="container-fluid movie", id=movie.id)
+        .container
+            .row.movie-block
+                .col-12.col-md-4.col-lg-3.movie-img
+                    img(class="", src="http://image.tmdb.org/t/p/w500" + movie.poster_path, alt=movie.title, title=movie.title)
+                .col-12.col-md-8.col-lg-9.movie-info
+                    <div class="movie-title secondary">#{movie.title}</div>
+                    <div class="movie-date grey">#{movie.release_date}</div>
+                    <div class="movie-desc grey">#{movie.overview}</div>
+                    <div class="movie-features">
+                        <div class="movie-tags">
+                            each genre, index in movieGenres
+                                <div class="tag grey">
+                                    <i class="fas fa-tag"></i>#{genre.name}
+                                </div>
+                        </div>
+                        <div class="movie-actions">
+                            if movie.onLibrary
+                                <div class="action secondary" id="action-library">
+                                    input(type="checkbox", class="custom-check", id="toggleLibrary", checked)
+                                    label(for="toggleLibrary")
+                                </div>
+                            else
+                                <div class="action grey" id="action-library">
+                                    input(type="checkbox", class="custom-check", id="toggleLibrary")
+                                    label(for="toggleLibrary")
+                                </div>
+                                
+                            if movie.isFav
+                                <div class="action secondary" id="action-fav">
+                                    input(type="checkbox", class="custom-check", id="toggleFav", checked)
+                                    label(for="toggleFav")
+                                </div>
+                            else
+                                <div class="action grey" id="action-fav">
+                                    input(type="checkbox", class="custom-check", id="toggleFav")
+                                    label(for="toggleFav")
+                                </div>
+                        </div>
+                    </div>
+
+block scripts
+      script(type='text/javascript', src='/javascripts/movie-details.js')
+                    

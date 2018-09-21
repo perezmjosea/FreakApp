@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/node_modules", express.static(__dirname + "/node_modules"));
 app.use("/bower_components", express.static(__dirname + "/bower_components"));
-app.use("/tmdb-images", express.static("http://image.tmdb.org/t/p/"));
+// app.use("/tmdb-images", express.static("http://image.tmdb.org/t/p/"));
 
 // Router
 app.use("/", appRouter);

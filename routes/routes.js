@@ -13,11 +13,6 @@ const dbSeries = JSON.parse(fs.readFileSync(dbSeriesPath), "utf8");
 
 // API
 const apiURL = "https://api.themoviedb.org/3";
-const config = {
-  params: {
-    api_key: process.env.TMDB_API_KEY
-  }
-};
 
 // FUNCTIONS
 //// Save on DB
@@ -39,12 +34,9 @@ function saveOnDB(data, type) {
 }
 
 // INDEX VIEW
-router.get("/", function(req, res, next) {
-  res.render("index", { title: "Express" });
-});
-
-// HOME VIEW
-router.get("/home", async function(req, res, next) {
+router.get("/", async function(req, res, next) {
+  // Cargamos los datos (Movies) de la API,
+  // Los formateamos y comprobamos si existen en DB
   const movies = await axios
     .get(apiURL + "/discover/movie", {
       params: {
@@ -65,34 +57,11 @@ router.get("/home", async function(req, res, next) {
     const isDuplicated = dbMovies.movies.find(item => item.id === movie.id);
     return !Boolean(isDuplicated);
   });
-  saveOnDB(reqMovies, "movies");
-  res.render("home", { title: "Freak App" });
-});
 
-// MOVIES VIEW
-router.get("/movies", async function(req, res) {
-  const genreFilter =
-    req.query.genre && req.query.genre !== undefined
-      ? req.query.genre
-      : undefined;
-
-  const searchFilter =
-    req.query.search && req.query.search !== undefined
-      ? req.query.search
-      : undefined;
-
-  const isAjaxRequest =
-    req.query.ajaxReq && req.query.ajaxReq !== false
-      ? req.query.ajaxReq
-      : false;
-
-  const searchempty =
-    req.query.searchempty && req.query.searchempty !== false
-      ? req.query.searchempty
-      : false;
-
-  const movies = await axios
-    .get(apiURL + "/discover/movie", {
+  // Cargamos los datos (Series) de la API,
+  // Los formateamos y comprobamos si existen en DB
+  const series = await axios
+    .get(apiURL + "/discover/tv", {
       params: {
         api_key: process.env.TMDB_API_KEY,
         language: "es-ES",
@@ -101,6 +70,55 @@ router.get("/movies", async function(req, res) {
     })
     .catch(e => res.status(500).send("error"));
 
+  const formatedSeries = series.data.results.map(serie => ({
+    ...serie,
+    rating: 0,
+    isFav: false,
+    onLibrary: false
+  }));
+  const reqSeries = formatedSeries.filter(serie => {
+    const isDuplicated = dbSeries.series.find(item => item.id === serie.id);
+    return !Boolean(isDuplicated);
+  });
+  res.render("index", { title: "Freak App" });
+
+  // Guardamos en DB
+  saveOnDB(reqMovies, "movies");
+  saveOnDB(reqSeries, "series");
+});
+
+// HOME VIEW
+router.get("/home", function(req, res, next) {
+  res.render("home", { title: "Freak App" });
+});
+
+// MOVIES VIEW
+router.get("/movies", async function(req, res) {
+  // Comprobamos filtro de género
+  const genreFilter =
+    req.query.genre && req.query.genre !== undefined
+      ? req.query.genre
+      : undefined;
+
+  // Comprobamos filtro de búsqueda
+  const searchFilter =
+    req.query.search && req.query.search !== undefined
+      ? req.query.search
+      : undefined;
+
+  // Comprobamos petición ajax
+  const isAjaxRequest =
+    req.query.ajaxReq && req.query.ajaxReq !== false
+      ? req.query.ajaxReq
+      : false;
+
+  // Comprobamos si se ha borrado la búsqueda
+  const searchempty =
+    req.query.searchempty && req.query.searchempty !== false
+      ? req.query.searchempty
+      : false;
+
+  // Obtenemos los géneros
   const genres = await axios
     .get(apiURL + "/genre/movie/list", {
       params: {
@@ -112,19 +130,20 @@ router.get("/movies", async function(req, res) {
     .catch(e => res.status(500).send("error"));
 
   if (isAjaxRequest) {
-    if (genreFilter) {
-      // Get data from DB
-      // if (genreFilter == "all") {
-      //   const movies = dbMovies.movies;
-      //   return res.status(200).json({ movies: movies });
-      // } else {
-      //   const movies = dbMovies.movies.filter(
-      //     movie => movie.genre_ids.indexOf(parseInt(genreFilter)) >= 0
-      //   );
-      //   return res.status(200).json({ movies: movies });
-      // }
+    // Si es ajax cargaremos los datosd esde la API,
+    // para obtener mas pelis y guardarlas.
+    const movies = await axios
+      .get(apiURL + "/discover/movie", {
+        params: {
+          api_key: process.env.TMDB_API_KEY,
+          language: "es-ES",
+          region: "ES"
+        }
+      })
+      .catch(e => res.status(500).send("error"));
 
-      // Get data from API
+    if (genreFilter) {
+      // Buscamos por género en la API
       let filteredMovies;
       if (genreFilter == "all") {
         filteredMovies = movies.data.results;
@@ -133,29 +152,27 @@ router.get("/movies", async function(req, res) {
           movie => movie.genre_ids.indexOf(parseInt(genreFilter)) >= 0
         );
       }
+      // Formateamos los datos para añadir propiedades
       const formatedMovies = filteredMovies.map(movie => ({
         ...movie,
         rating: 0,
         isFav: false,
         onLibrary: false
       }));
+      // Comprobamos los datos que ya existen
+      // y devolvemos los que no para guardarlos
       const reqMovies = formatedMovies.filter(movie => {
         const isDuplicated = dbMovies.movies.find(item => item.id === movie.id);
         return !Boolean(isDuplicated);
       });
+      // Guardamos los datos que no existen
       saveOnDB(reqMovies, "movies");
+      // Devolvemos a la vista los datos formateados
       return res.status(200).json({ movies: formatedMovies });
     }
 
     if (searchFilter) {
-      // Get data from DB
-      // const movies = dbMovies.movies.filter(
-      //   movie =>
-      //     movie.title.toLowerCase().indexOf(searchFilter.toLowerCase()) >= 0
-      // );
-      // return res.status(200).json({ movies: movies });
-
-      // Get data from API
+      // Buscamos por término en la API
       const movies = await axios
         .get(apiURL + "/search/movie", {
           params: {
@@ -167,44 +184,33 @@ router.get("/movies", async function(req, res) {
         })
         .catch(e => res.status(500).send("error"));
 
+      // Formateamos los datos para añadir propiedades
       const formatedMovies = movies.data.results.map(movie => ({
         ...movie,
         rating: 0,
         isFav: false,
         onLibrary: false
       }));
+      // Comprobamos los datos que ya existen
+      // y devolvemos los que no para guardarlos
       const reqMovies = formatedMovies.filter(movie => {
         const isDuplicated = dbMovies.movies.find(item => item.id === movie.id);
         return !Boolean(isDuplicated);
       });
+      // Guardamos los datos que no existen
       saveOnDB(reqMovies, "movies");
+      // Devolvemos a la vista los datos formateados
       return res.status(200).json({ movies: formatedMovies });
     }
     if (searchempty) {
-      const movies = await axios
-        .get(apiURL + "/discover/movie", {
-          params: {
-            api_key: process.env.TMDB_API_KEY,
-            language: "es-ES",
-            region: "ES"
-          }
-        })
-        .catch(e => res.status(500).send("error"));
-
-      const formatedMovies = movies.data.results.map(movie => ({
-        ...movie,
-        rating: 0,
-        isFav: false,
-        onLibrary: false
-      }));
-      const reqMovies = formatedMovies.filter(movie => {
-        const isDuplicated = dbMovies.movies.find(item => item.id === movie.id);
-        return !Boolean(isDuplicated);
-      });
-      saveOnDB(reqMovies, "movies");
-      return res.status(200).json({ movies: formatedMovies });
+      // Si se borra el campo de búsqueda,
+      // cargamos los datos de la DB
+      const movies = dbMovies.movies;
+      return res.status(200).json({ movies: movies });
     }
   } else {
+    // Si no es ajax, cargamos de la DB
+    // que ya hemos guardado en la vista Index
     const movies = dbMovies.movies;
     res.render("movies", {
       title: "Freak App | Movies",
@@ -218,20 +224,7 @@ router.get("/movies", async function(req, res) {
 // MOVIE DETAILS
 router.get("/movie/:id", async function(req, res) {
   const movieId = req.params.id;
-
-  // const movie = await axios
-  //   .get(apiURL + "/movie/" + movieId, {
-  //     params: {
-  //       api_key: process.env.TMDB_API_KEY,
-  //       language: "es-ES",
-  //       region: "ES"
-  //     }
-  //   })
-  //   .catch(e => res.status(500).send("error"));
-
-  const movie = dbMovies.movies.find(
-    item => item.id === parseInt(req.params.id)
-  );
+  const movie = dbMovies.movies.find(item => item.id === parseInt(movieId));
 
   const genres = await axios
     .get(apiURL + "/genre/movie/list", {
@@ -249,7 +242,6 @@ router.get("/movie/:id", async function(req, res) {
     let gn = genres.data.genres.filter(g => g.id == movieGenresIds[i]);
     movieGenres = [...movieGenres, ...gn];
   }
-  console.log(movieGenres);
 
   res.render("movie-details", {
     title: "Freak App | Movie Details",
@@ -281,47 +273,81 @@ router.patch("/toggle-library/:id", async function(req, res) {
   return res.status(200).send();
 });
 
-// SERIES VIEW
-router.get("/series", async function(req, res) {
-  const series = await axios
-    .get(apiURL + "/discover/tv", {
-      params: {
-        api_key: process.env.TMDB_API_KEY,
-        language: "es-ES",
-        region: "ES"
-      }
-    })
-    .catch(e => res.status(500).send("error"));
-
-  const genres = await axios
-    .get(apiURL + "/genre/tv/list", {
-      params: {
-        api_key: process.env.TMDB_API_KEY,
-        language: "es-ES",
-        region: "ES"
-      }
-    })
-    .catch(e => res.status(500).send("error"));
-
-  const formatedSeries = series.data.results.map(serie => ({
-    ...serie,
-    rating: 0,
-    isFav: false,
-    onLibrary: false
-  }));
-
-  const uniqueSeries = formatedSeries.filter(serie => {
-    const isDuplicated = dbSeries.series.find(item => item.id === serie.id);
-    return !Boolean(isDuplicated);
+// SET RATING MOVIE
+router.patch("/set-rating/:id", async function(req, res) {
+  dbMovies.movies.forEach(movie => {
+    if (parseInt(movie.id) === parseInt(req.params.id)) {
+      movie.rating = req.body.rating;
+    }
   });
+  fs.writeFileSync(dbMoviesPath, JSON.stringify(dbMovies), "utf8");
 
-  res.render("series", {
-    title: "Freak App | Series",
-    page: "series",
-    series: formatedSeries,
-    genres: genres.data.genres
-  });
-  saveOnDB(uniqueSeries, "series");
+  return res
+    .status(200)
+    .json({ resp: "OK", dato: "algo", data: req.body.rating });
 });
+
+// LIBRARY VIEW
+router.get("/library", async function(req, res) {
+  const movies = dbMovies.movies.filter(movie => movie.onLibrary === true);
+  res.render("movies", {
+    title: "Freak App | Library",
+    page: "library",
+    movies: movies
+  });
+});
+
+// FAVS VIEW
+router.get("/favs", async function(req, res) {
+  const movies = dbMovies.movies.filter(movie => movie.isFav === true);
+  res.render("movies", {
+    title: "Freak App | Favs",
+    page: "favs",
+    movies: movies
+  });
+});
+
+// SERIES VIEW
+// router.get("/series", async function(req, res) {
+//   const series = await axios
+//     .get(apiURL + "/discover/tv", {
+//       params: {
+//         api_key: process.env.TMDB_API_KEY,
+//         language: "es-ES",
+//         region: "ES"
+//       }
+//     })
+//     .catch(e => res.status(500).send("error"));
+
+//   const genres = await axios
+//     .get(apiURL + "/genre/tv/list", {
+//       params: {
+//         api_key: process.env.TMDB_API_KEY,
+//         language: "es-ES",
+//         region: "ES"
+//       }
+//     })
+//     .catch(e => res.status(500).send("error"));
+
+//   const formatedSeries = series.data.results.map(serie => ({
+//     ...serie,
+//     rating: 0,
+//     isFav: false,
+//     onLibrary: false
+//   }));
+
+//   const uniqueSeries = formatedSeries.filter(serie => {
+//     const isDuplicated = dbSeries.series.find(item => item.id === serie.id);
+//     return !Boolean(isDuplicated);
+//   });
+
+//   res.render("series", {
+//     title: "Freak App | Series",
+//     page: "series",
+//     series: formatedSeries,
+//     genres: genres.data.genres
+//   });
+//   saveOnDB(uniqueSeries, "series");
+// });
 
 module.exports = router;

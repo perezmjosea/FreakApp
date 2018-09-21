@@ -7,6 +7,7 @@ html
     link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/bower_components/font-awesome/web-fonts-with-css/css/fontawesome-all.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    //- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
   body
     .loading-mask
       <i class="fas fa-spinner fa-spin"></i>
@@ -23,9 +24,12 @@ html
             <ul class="navbar-nav ml-auto">
               li(class="nav-item " + (page === "movies" || page === "movie-details" ? "active" : ""))
                 <a class="nav-link" href="/movies">Movies</a>
-              li(class="nav-item " + (page === "series" ? "active" : ""))
-                <a class="nav-link" href="/series">Series</a>
-              </li>
+              //- li(class="nav-item " + (page === "series" ? "active" : ""))
+              //-   <a class="nav-link" href="/series">Series</a>
+              li(class="nav-item " + (page === "library" ? "active" : ""))
+                <a class="nav-link" href="/library">library</a>
+              li(class="nav-item " + (page === "favs" ? "active" : ""))
+                <a class="nav-link" href="/favs">Favs</a>
             </ul>
           </div>
       </nav>
@@ -47,10 +51,10 @@ html
                   .filter-header
                     <span>Categorías</span>
                   div(class=`filter-content`) 
-                    a(onclick=`filterByGenre("all")`, class=("grey-link genre-filter-link"), data-genre=`all`)
+                    a(onclick=`filterByGenre("all")`, class=("primary-link genre-filter-link active"), data-genre=`all`)
                         <span>Todos los géneros</span>
                     each genre, index in genres
-                        a(onclick=`filterByGenre(${genre.id})`, class="grey-link genre-filter-link", data-genre=`${genre.id}`)
+                        a(onclick=`filterByGenre(${genre.id})`, class="primary-link genre-filter-link", data-genre=`${genre.id}`)
                             <span>#{genre.name}</span>
             block content
 
@@ -59,6 +63,7 @@ html
 
     script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
     script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+    //- <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
     block scripts    
     script(type='text/javascript', src='/javascripts/scripts.js')
       

@@ -4,6 +4,7 @@ body {
   font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
   font-size: 14px;
   /* background-color: #0f171e; */
+  /* background-color: rgba(0, 183, 255, 0.8); */
 }
 .primary {
   color: #00b7ff;
@@ -21,11 +22,15 @@ a:hover {
   text-decoration: none;
 }
 .primary-link {
-  color: #00b7ff;
+  color: #969696 !important;
 }
 .primary-link:hover,
 .active.primary-link {
-  color: #dc7921;
+  color: #dc7921 !important;
+  border-left: 1px solid #dc7921;
+}
+.primary-link.detail-genre-filter-link:hover {
+  border-left: none;
 }
 .grey-link {
   color: #969696 !important;
@@ -119,7 +124,8 @@ section {
   text-overflow: ellipsis;
   line-height: 16px; /* fallback */
   height: 180px; /* fallback */
-  -webkit-box-orient: vertical;
+  font-size: 13px;
+  background-color: #f5f5f5;
 }
 .card-body:after {
   content: "";
@@ -150,6 +156,8 @@ section {
 .movie-block {
   display: flex;
   align-items: stretch;
+  padding: 20px 0;
+  background-color: #f5f5f5;
 }
 .movie-block .movie-img {
 }
@@ -167,10 +175,83 @@ section {
   margin-bottom: 20px;
   border-bottom: 1px solid;
 }
-.movie-block .movie-info .movie-date {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
+.movie-block .movie-info .movie-date-rate {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 50px;
 }
+.movie-block .movie-info .movie-date {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 50px;
+  font-size: 1.2rem;
+}
+
+/* x-star-rating {
+  font-family: "Font Awesome 5 Free";
+  font-size: 40px;
+  display: inline-flex;
+  cursor: pointer;
+}
+x-star-rating > .star::after {
+  content: "";
+  color: #a8a8a8;
+}
+x-star-rating > .star.full::after {
+  content: "";
+  color: #dc7921;
+}*/
+
+.movie-rate,
+.stars {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-height: 50px;
+  font-size: 1rem;
+}
+
+.movie-rate > input {
+  display: none;
+}
+.movie-rate > label:before {
+  margin: 5px;
+  font-size: 1.25em;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  display: inline-block;
+  content: "\f005";
+}
+
+.movie-rate > .half:before {
+  content: "\f089";
+  position: absolute;
+}
+
+.movie-rate > label {
+  float: right;
+}
+
+/***** CSS Magic to Highlight Stars on Hover *****/
+
+.movie-rate > input:checked ~ label, /* show gold star when clicked */
+  .movie-rate:not(:checked) > label:hover, /* hover current star */
+  .movie-rate:not(:checked) > label:hover ~ label {
+  color: #dc7921;
+} /* hover previous stars in list */
+
+.movie-rate > input:checked + label:hover, /* hover current star when changing movie-rate */
+  .movie-rate > input:checked ~ label:hover,
+  .movie-rate > label:hover ~ input:checked ~ label, /* lighten current selection */
+  .movie-rate > input:checked ~ label:hover ~ label {
+  color: #f19d52;
+}
+
 .movie-block .movie-info .movie-desc {
   line-height: 1.2rem;
   margin-bottom: 20px;
@@ -208,6 +289,9 @@ section {
   margin-left: 6px;
   margin-bottom: 0;
 }
+.custom-check + label:hover {
+  color: #f19d52;
+}
 .custom-check + label:after {
   font-family: "Font Awesome\ 5 Free";
   font-size: 25px;
@@ -229,7 +313,7 @@ section {
   margin-bottom: 20px;
   padding: 20px;
   /* border-bottom: 1px solid #dc7921; */
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: #f5f5f5;
 }
 .filter-header {
   padding-bottom: 5px;
